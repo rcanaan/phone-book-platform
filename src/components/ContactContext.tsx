@@ -1,16 +1,18 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
-// Define the structure of a contact object
+const initialOrganizations = ["Microsoft", "Nvidia", "MsBit"];
+
 export interface Contact {
   id: number;
   name: string;
-  email?: string;
-  mobile?: string;
-  organization?: string; // Added organization field
+  email: string;
+  mobile: string;
+  organization?: string;
 }
-
 interface ContactContextType {
   contacts: Contact[];
+  organizations: string[];
+  addOrganization: (newOrganization: string) => void;
   addContact: (contact: Omit<Contact, "id">) => void;
   deleteContact: (id: number) => void;
   editContact: (id: number, updatedContact: Partial<Contact>) => void;
@@ -34,7 +36,11 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
   children,
 }) => {
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [organizations, setOrganizations] = useState(initialOrganizations);
 
+  const addOrganization = (newOrganization: string) => {
+    setOrganizations([...organizations, newOrganization]);
+  };
   const addContact = (contact: Omit<Contact, "id">) => {
     setContacts([...contacts, { ...contact, id: Date.now() }]);
   };
@@ -53,7 +59,14 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
 
   return (
     <ContactContext.Provider
-      value={{ contacts, addContact, deleteContact, editContact }}
+      value={{
+        contacts,
+        addContact,
+        deleteContact,
+        editContact,
+        addOrganization,
+        organizations,
+      }}
     >
       {children}
     </ContactContext.Provider>

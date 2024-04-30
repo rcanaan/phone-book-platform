@@ -10,10 +10,10 @@ export default function Header() {
             <Link to="/">Home</Link>
           </li>
           <li>
-            <Link to="/AddContact">Add Contact</Link>
+            <Link to="/addContact">Add Contact</Link>
           </li>
           <li>
-            <Link to="/ContactList">Contact List</Link>
+            <Link to="/contactList">Contact List</Link>
           </li>
 
           <li className="lg:hidden">

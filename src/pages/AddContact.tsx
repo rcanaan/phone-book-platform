@@ -1,28 +1,14 @@
 import React, { useState } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
-import { useContacts } from "../components/ContactContext"; // Adjust the import path as necessary
+import { Contact, useContacts } from "../components/ContactContext"; // Adjust the import path as necessary
 
-interface Inputs {
-  userName: string;
-  organization?: string;
-  email: string;
-  mobile: number;
-}
+type Inputs = Omit<Contact, "id">;
 
-const initialOrganizations = [
-  { label: "Microsoft", value: "Microsoft" },
-  { label: "Nvidia", value: "Nvidia" },
-  { label: "MsBit", value: "MsBit" },
-];
-
+const filter = createFilterOptions<string>();
 export default function AddContact() {
-  const [organizations, setOrganizations] = useState(initialOrganizations);
-  const [organizationInput, setOrganizationInput] = useState<string | null>(
-    null
-  );
   const {
     register,
     handleSubmit,
@@ -31,36 +17,36 @@ export default function AddContact() {
     formState: { errors, isValid },
   } = useForm<Inputs>({
     defaultValues: {
-      userName: "",
+      name: "",
       email: "",
+      organization: "",
       mobile: undefined,
     },
     mode: "onChange",
   });
 
-  const { addContact } = useContacts();
-
+  const { addContact, organizations, addOrganization } = useContacts();
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    const contactData = {
-      name: data.userName,
-      email: data.email,
-      mobile: data.mobile.toString(),
-      organization: data.organization,
-    };
-    addContact(contactData);
-    alert(`${data.userName} saved successfully.`);
-    reset(); // Resets the form fields to initial values
-    setOrganizationInput(null); // Clears the organization input in the Autocomplete
+    const isNewOrganization =
+      data.organization && !organizations.includes(data.organization);
+    if (isNewOrganization) {
+      // we do know that data.organization exists (!)
+      addOrganization(data.organization!);
+    }
+    addContact(data);
+    alert(`${data.name} saved successfully.`);
+    // redirect to concatList?
+    reset();
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <TextField
-        {...register("userName", { required: "Name is required" })}
+        {...register("name", { required: "Name is required" })}
         label="Name"
         required
-        error={!!errors.userName}
-        helperText={errors.userName?.message}
+        error={!!errors.name}
+        helperText={errors.name?.message}
         variant="outlined"
         fullWidth
         margin="normal"
@@ -69,41 +55,42 @@ export default function AddContact() {
       <Controller
         name="organization"
         control={control}
-        render={({ field, fieldState }) => (
-          <Autocomplete
-            {...field}
-            freeSolo
-            options={organizations}
-            getOptionLabel={(option) =>
-              typeof option === "string" ? option : option.label
-            }
-            isOptionEqualToValue={(option, value) =>
-              typeof option === "string"
-                ? option === value
-                : option.value === value.value
-            }
-            value={organizationInput} // Controlled value
-            onChange={(event, newValue) => {
-              if (typeof newValue === "string" || newValue === null) {
-                setOrganizationInput(newValue); // Directly set the string or null
+        render={({ field, fieldState }) => {
+          return (
+            <Autocomplete
+              {...field}
+              freeSolo
+              options={organizations}
+              value={field.value} // Controlled value
+              filterOptions={(options, params) => {
+                const filtered = filter(options, params);
+                const { inputValue } = params;
+                // Suggest the creation of a new value
+                const isExisting = options.some(
+                  (option) => inputValue === option
+                );
+                if (inputValue !== "" && !isExisting) {
+                  filtered.push(inputValue);
+                }
+
+                return filtered;
+              }}
+              onChange={(event, newValue) => {
                 field.onChange(newValue);
-              } else {
-                setOrganizationInput(newValue.value); // Set the value from the option object
-                field.onChange(newValue.value);
-              }
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Organization"
-                variant="outlined"
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-                fullWidth
-              />
-            )}
-          />
-        )}
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Organization"
+                  variant="outlined"
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                  fullWidth
+                />
+              )}
+            />
+          );
+        }}
       />
 
       <TextField

@@ -9,7 +9,7 @@ const Layout: React.FC = () => {
       <Header />
 
       <main className="p-4">
-        <Outlet />{" "}
+        <Outlet />
       </main>
       <Footer />
     </div>

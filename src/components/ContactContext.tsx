@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 const initialOrganizations = ["Microsoft", "Nvidia", "MsBit"];
 
 export interface Contact {
-  id: number;
+  id: string;
   name: string;
   email: string;
   mobile: string;
@@ -18,9 +18,9 @@ interface ContactContextType {
     newOrganization: string
   ) => void;
   addContact: (contact: Omit<Contact, "id">) => void;
-  deleteContact: (id: number) => void;
-  getContactById: (id: number) => Contact;
-  editContact: (id: number, updatedContact: Partial<Contact>) => void;
+  deleteContact: (id: string) => void;
+  getContactById: (id: string) => Contact;
+  editContact: (id: string, updatedContact: Partial<Contact>) => void;
 }
 
 const ContactContext = createContext<ContactContextType | undefined>(undefined);
@@ -47,13 +47,13 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     setOrganizations([...organizations, newOrganization]);
   };
   const addContact = (contact: Omit<Contact, "id">) => {
-    setContacts([...contacts, { ...contact, id: Date.now() }]);
+    setContacts([...contacts, { ...contact, id: Date.now().toString() }]);
   };
 
-  const getContactById = (id: number) => {
+  const getContactById = (id: string) => {
     return contacts.filter((contact) => contact.id === id)[0];
   };
-  const deleteContact = (id: number) => {
+  const deleteContact = (id: string) => {
     setContacts(contacts.filter((contact) => contact.id !== id));
   };
 
@@ -67,7 +67,7 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
       )
     );
   };
-  const editContact = (id: number, updatedContact: Partial<Contact>) => {
+  const editContact = (id: string, updatedContact: Partial<Contact>) => {
     setContacts(
       contacts.map((contact) =>
         contact.id === id ? { ...contact, ...updatedContact } : contact

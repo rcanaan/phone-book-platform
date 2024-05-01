@@ -1,7 +1,6 @@
 import React from "react";
 import { useContacts } from "../components/ContactContext";
 import { useNavigate } from "react-router-dom";
-
 import {
   Table,
   TableBody,
@@ -19,71 +18,60 @@ import {
 const ContactList: React.FC = () => {
   const { contacts, deleteContact } = useContacts();
   const [openDialog, setOpenDialog] = React.useState(false);
-  const [selectedId, setSelectedId] = React.useState<number | null>(null);
-
+  const [selectedContact, setSelectedContact] = React.useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const navigate = useNavigate();
 
-  const handleOpenDialog = (id: number) => {
+  const handleOpenDialog = (id: string, name: string) => {
     setOpenDialog(true);
-    setSelectedId(id);
+    setSelectedContact({ id, name });
   };
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
+    setSelectedContact(null); // Reset selectedContact on dialog close
   };
 
   const handleDelete = () => {
-    if (selectedId) {
-      deleteContact(selectedId);
+    if (selectedContact) {
+      deleteContact(selectedContact.id);
       handleCloseDialog();
     }
   };
-  const handleEdit = (id: number) => {
-    navigate(`/editContact/${id}`);
+
+  const handleEdit = (id: string) => {
+    navigate("/addContact/", { state: { id } });
   };
+
   return (
     <div className="overflow-x-auto">
       <Table className="min-w-full leading-normal">
         <TableHead>
           <TableRow>
-            <TableCell className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-              Name
-            </TableCell>
-            <TableCell className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider md:table-cell hidden">
-              Email
-            </TableCell>
-            <TableCell className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider md:table-cell hidden">
-              Mobile
-            </TableCell>
-            <TableCell className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-              Organization
-            </TableCell>
-            <TableCell className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-              Actions
-            </TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Mobile</TableCell>
+            <TableCell>Organization</TableCell>
+            <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {contacts.map((contact) => (
             <TableRow key={contact.id}>
-              <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                {contact.name}
-              </TableCell>
-              <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm md:table-cell hidden">
-                {contact.email}
-              </TableCell>
-              <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm md:table-cell hidden">
-                {contact.mobile}
-              </TableCell>
-              <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+              <TableCell>{contact.name}</TableCell>
+              <TableCell>{contact.email}</TableCell>
+              <TableCell>{contact.mobile}</TableCell>
+              <TableCell>
                 {contact.organization
                   ? contact.organization
                   : "No Organization"}
               </TableCell>
-              <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+              <TableCell>
                 <Button
                   color="primary"
-                  onClick={() => handleOpenDialog(contact.id)}
+                  onClick={() => handleOpenDialog(contact.id, contact.name)}
                 >
                   Delete
                 </Button>
@@ -98,14 +86,22 @@ const ContactList: React.FC = () => {
           ))}
         </TableBody>
       </Table>
-      {openDialog && (
+      {openDialog && selectedContact && (
         <Dialog open={openDialog} onClose={handleCloseDialog}>
-          <DialogTitle>{"Are you sure?"}</DialogTitle>
+          <DialogTitle>{"Confirm Deletion"}</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              This will permanently delete the contact.
+              Remove {selectedContact.name}, are you sure?
             </DialogContentText>
           </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleDelete} color="primary" autoFocus>
+              Delete
+            </Button>
+          </DialogActions>
         </Dialog>
       )}
     </div>

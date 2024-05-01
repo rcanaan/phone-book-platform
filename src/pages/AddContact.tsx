@@ -1,20 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
 import { Contact, useContacts } from "../components/ContactContext"; // Adjust the import path as necessary
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 
 export type Inputs = Omit<Contact, "id">;
 
 export const filter = createFilterOptions<string>();
 export default function AddContact() {
+  const location = useLocation();
+  const state = location.state as { id?: string }; // Accessing state
+  const id = state?.id; // Getting the id from state
   const {
     register,
     handleSubmit,
     control,
     reset,
+    setValue,
     formState: { errors, isValid },
   } = useForm<Inputs>({
     defaultValues: {
@@ -27,7 +31,27 @@ export default function AddContact() {
   });
 
   const navigate = useNavigate();
-  const { addContact, organizations, addOrganization } = useContacts();
+  const {
+    addContact,
+    editContact,
+    organizations,
+    addOrganization,
+    editOrganization,
+    contacts,
+  } = useContacts();
+
+  useEffect(() => {
+    if (id) {
+      const contactToEdit = contacts.find((contact) => contact.id === id);
+      if (contactToEdit) {
+        setValue("name", contactToEdit.name);
+        setValue("email", contactToEdit.email);
+        setValue("organization", contactToEdit.organization);
+        setValue("mobile", contactToEdit.mobile);
+      }
+    }
+  }, [id, contacts, setValue]);
+
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     const isNewOrganization =
       data.organization && !organizations.includes(data.organization);
@@ -35,9 +59,13 @@ export default function AddContact() {
       // we do know that data.organization exists (!)
       addOrganization(data.organization!);
     }
-    addContact(data);
-    alert(`${data.name} saved successfully.`);
-
+    if (id) {
+      editContact(id, data);
+      alert(`${data.name} updated successfully.`);
+    } else {
+      addContact(data);
+      alert(`${data.name} saved successfully.`);
+    }
     reset();
     navigate(`/contactList`);
   };
@@ -80,6 +108,8 @@ export default function AddContact() {
               }}
               onChange={(event, newValue) => {
                 field.onChange(newValue);
+                // to update the list of organizations
+                editOrganization(field.value!, newValue!);
               }}
               renderInput={(params) => (
                 <TextField
@@ -137,7 +167,7 @@ export default function AddContact() {
         variant="contained"
         color="primary"
       >
-        Save
+        {id ? "Update" : "Save"}
       </Button>
     </form>
   );

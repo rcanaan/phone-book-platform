@@ -4,10 +4,11 @@ import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
 import { Contact, useContacts } from "../components/ContactContext"; // Adjust the import path as necessary
+import { useNavigate } from "react-router-dom";
 
-type Inputs = Omit<Contact, "id">;
+export type Inputs = Omit<Contact, "id">;
 
-const filter = createFilterOptions<string>();
+export const filter = createFilterOptions<string>();
 export default function AddContact() {
   const {
     register,
@@ -25,6 +26,7 @@ export default function AddContact() {
     mode: "onChange",
   });
 
+  const navigate = useNavigate();
   const { addContact, organizations, addOrganization } = useContacts();
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     const isNewOrganization =
@@ -35,8 +37,9 @@ export default function AddContact() {
     }
     addContact(data);
     alert(`${data.name} saved successfully.`);
-    // redirect to concatList?
+
     reset();
+    navigate(`/contactList`);
   };
 
   return (

@@ -4,9 +4,9 @@ import HomePage from "./pages/HomePage";
 import Layout from "./pages/Layout";
 import AddContact from "./pages/AddContact";
 import ContactList from "./pages/ContactLIst";
-import Header from "./pages/Header";
-import Footer from "./pages/Footer";
+
 import { ContactProvider } from "./components/ContactContext";
+import EditContact from "./pages/EditContact";
 
 const App: React.FC = () => {
   return (
@@ -17,10 +17,8 @@ const App: React.FC = () => {
             <Route index element={<HomePage />} />
             <Route path="addContact" element={<AddContact />} />
             <Route path="contactList" element={<ContactList />} />
-            // Add more nested routes here if needed
+            <Route path="editContact/:id" element={<EditContact />} />
           </Route>
-          // You can also add routes here that do not use the common layout if
-          necessary
         </Routes>
       </ContactProvider>
     </Router>

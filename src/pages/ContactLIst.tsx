@@ -1,5 +1,7 @@
 import React from "react";
 import { useContacts } from "../components/ContactContext";
+import { useNavigate } from "react-router-dom";
+
 import {
   Table,
   TableBody,
@@ -16,9 +18,10 @@ import {
 
 const ContactList: React.FC = () => {
   const { contacts, deleteContact } = useContacts();
-
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
+
+  const navigate = useNavigate();
 
   const handleOpenDialog = (id: number) => {
     setOpenDialog(true);
@@ -35,36 +38,60 @@ const ContactList: React.FC = () => {
       handleCloseDialog();
     }
   };
-
+  const handleEdit = (id: number) => {
+    navigate(`/editContact/${id}`);
+  };
   return (
-    <div>
-      <Table>
+    <div className="overflow-x-auto">
+      <Table className="min-w-full leading-normal">
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Mobile</TableCell>
-            <TableCell>Organization</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              Name
+            </TableCell>
+            <TableCell className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider md:table-cell hidden">
+              Email
+            </TableCell>
+            <TableCell className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider md:table-cell hidden">
+              Mobile
+            </TableCell>
+            <TableCell className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              Organization
+            </TableCell>
+            <TableCell className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              Actions
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {contacts.map((contact) => (
             <TableRow key={contact.id}>
-              <TableCell>{contact.name}</TableCell>
-              <TableCell>{contact.email}</TableCell>
-              <TableCell>{contact.mobile}</TableCell>
-              <TableCell>
+              <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                {contact.name}
+              </TableCell>
+              <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm md:table-cell hidden">
+                {contact.email}
+              </TableCell>
+              <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm md:table-cell hidden">
+                {contact.mobile}
+              </TableCell>
+              <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                 {contact.organization
                   ? contact.organization
                   : "No Organization"}
               </TableCell>
-              <TableCell>
+              <TableCell className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                 <Button
                   color="primary"
                   onClick={() => handleOpenDialog(contact.id)}
                 >
                   Delete
+                </Button>
+                <Button
+                  color="secondary"
+                  onClick={() => handleEdit(contact.id)}
+                >
+                  Edit
                 </Button>
               </TableCell>
             </TableRow>
@@ -79,14 +106,6 @@ const ContactList: React.FC = () => {
               This will permanently delete the contact.
             </DialogContentText>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={handleDelete} color="secondary" autoFocus>
-              Delete
-            </Button>
-          </DialogActions>
         </Dialog>
       )}
     </div>

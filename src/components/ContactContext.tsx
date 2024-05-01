@@ -13,8 +13,13 @@ interface ContactContextType {
   contacts: Contact[];
   organizations: string[];
   addOrganization: (newOrganization: string) => void;
+  editOrganization: (
+    currentOrganization: string,
+    newOrganization: string
+  ) => void;
   addContact: (contact: Omit<Contact, "id">) => void;
   deleteContact: (id: number) => void;
+  getContactById: (id: number) => Contact;
   editContact: (id: number, updatedContact: Partial<Contact>) => void;
 }
 
@@ -45,10 +50,23 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
     setContacts([...contacts, { ...contact, id: Date.now() }]);
   };
 
+  const getContactById = (id: number) => {
+    return contacts.filter((contact) => contact.id === id)[0];
+  };
   const deleteContact = (id: number) => {
     setContacts(contacts.filter((contact) => contact.id !== id));
   };
 
+  const editOrganization = (
+    currentOrganization: string,
+    newOrganization: string
+  ) => {
+    setOrganizations(
+      organizations.map((org) =>
+        org === currentOrganization ? newOrganization : org
+      )
+    );
+  };
   const editContact = (id: number, updatedContact: Partial<Contact>) => {
     setContacts(
       contacts.map((contact) =>
@@ -64,8 +82,10 @@ export const ContactProvider: React.FC<ContactProviderProps> = ({
         addContact,
         deleteContact,
         editContact,
+        editOrganization,
         addOrganization,
         organizations,
+        getContactById,
       }}
     >
       {children}

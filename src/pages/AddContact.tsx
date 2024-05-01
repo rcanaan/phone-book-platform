@@ -3,16 +3,16 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
-import { Contact, useContacts } from "../components/ContactContext"; // Adjust the import path as necessary
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { Contact, useContacts } from "../components/ContactContext";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export type Inputs = Omit<Contact, "id">;
 
 export const filter = createFilterOptions<string>();
 export default function AddContact() {
   const location = useLocation();
-  const state = location.state as { id?: string }; // Accessing state
-  const id = state?.id; // Getting the id from state
+  const state = location.state as { id?: string };
+  const id = state?.id;
   const navigate = useNavigate();
   const {
     addContact,

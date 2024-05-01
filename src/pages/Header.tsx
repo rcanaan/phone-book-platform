@@ -19,7 +19,11 @@ export default function Header() {
           <li>
             <Link to="/">Home</Link>
           </li>
-          <div className={clsx("space-y-4", { collapse: isMenuOpen })}>
+          <div
+            className={clsx("space-y-4  lg:flex lg:space-y-0  lg:space-x-10", {
+              "collapse lg:visible ": isMenuOpen,
+            })}
+          >
             <li>
               <Link to="/addContact">Add Contact</Link>
             </li>

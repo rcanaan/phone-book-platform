@@ -5,7 +5,7 @@ import Footer from "./Footer";
 
 const Layout: React.FC = () => {
   return (
-    <div>
+    <div className="overflow-visible">
       <Header />
 
       <main className="p-4">

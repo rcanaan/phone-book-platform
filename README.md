@@ -13,3 +13,4 @@ Before you begin, ensure you have `node.js` and `npm` installed on your machine.
 ```bash
 node -v
 npm -v
+<img width="1094" alt="סקיצה" src="https://github.com/rcanaan/phone-book-platform/assets/58044154/c1764de7-aae8-471e-99d8-051a113c366f">

@@ -13,23 +13,6 @@ export default function AddContact() {
   const location = useLocation();
   const state = location.state as { id?: string }; // Accessing state
   const id = state?.id; // Getting the id from state
-  const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    setValue,
-    formState: { errors, isValid },
-  } = useForm<Inputs>({
-    defaultValues: {
-      name: "",
-      email: "",
-      organization: "",
-      mobile: undefined,
-    },
-    mode: "onChange",
-  });
-
   const navigate = useNavigate();
   const {
     addContact,
@@ -39,18 +22,24 @@ export default function AddContact() {
     editOrganization,
     contacts,
   } = useContacts();
+  const contactToEdit = contacts.find((contact) => contact.id === id);
 
-  useEffect(() => {
-    if (id) {
-      const contactToEdit = contacts.find((contact) => contact.id === id);
-      if (contactToEdit) {
-        setValue("name", contactToEdit.name);
-        setValue("email", contactToEdit.email);
-        setValue("organization", contactToEdit.organization);
-        setValue("mobile", contactToEdit.mobile);
-      }
-    }
-  }, [id, contacts, setValue]);
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+
+    formState: { errors, isValid },
+  } = useForm<Inputs>({
+    defaultValues: {
+      name: contactToEdit ? contactToEdit.name : "",
+      email: contactToEdit ? contactToEdit.email : "",
+      organization: contactToEdit ? contactToEdit.organization : "",
+      mobile: contactToEdit ? contactToEdit.mobile : undefined,
+    },
+    mode: "onChange",
+  });
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     const isNewOrganization =
@@ -59,7 +48,7 @@ export default function AddContact() {
       // we do know that data.organization exists (!)
       addOrganization(data.organization!);
     }
-    if (id) {
+    if (!!id) {
       editContact(id, data);
       alert(`${data.name} updated successfully.`);
     } else {

@@ -47,6 +47,7 @@ const ContactList: React.FC = () => {
 
   return (
     <div className="overflow-x-auto">
+      <h1 className="text-center font-bold text-2xl">Contact list Page</h1>
       <Table className="min-w-full leading-normal">
         <TableHead>
           <TableRow>

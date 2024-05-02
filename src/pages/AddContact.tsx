@@ -60,104 +60,108 @@ export default function AddContact() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <TextField
-        {...register("name", { required: "Name is required" })}
-        label="Name"
-        required
-        error={!!errors.name}
-        helperText={errors.name?.message}
-        variant="outlined"
-        fullWidth
-        margin="normal"
-      />
+    <div>
+      <h1 className="text-center font-bold text-2xl">Add Contact Page</h1>
 
-      <Controller
-        name="organization"
-        control={control}
-        render={({ field, fieldState }) => {
-          return (
-            <Autocomplete
-              {...field}
-              freeSolo
-              options={organizations}
-              value={field.value} // Controlled value
-              filterOptions={(options, params) => {
-                const filtered = filter(options, params);
-                const { inputValue } = params;
-                // Suggest the creation of a new value
-                const isExisting = options.some(
-                  (option) => inputValue === option
-                );
-                if (inputValue !== "" && !isExisting) {
-                  filtered.push(inputValue);
-                }
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <TextField
+          {...register("name", { required: "Name is required" })}
+          label="Name"
+          required
+          error={!!errors.name}
+          helperText={errors.name?.message}
+          variant="outlined"
+          fullWidth
+          margin="normal"
+        />
 
-                return filtered;
-              }}
-              onChange={(event, newValue) => {
-                field.onChange(newValue);
-                // to update the list of organizations
-                editOrganization(field.value!, newValue!);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Organization"
-                  variant="outlined"
-                  error={!!fieldState.error}
-                  helperText={fieldState.error?.message}
-                  fullWidth
-                />
-              )}
-            />
-          );
-        }}
-      />
+        <Controller
+          name="organization"
+          control={control}
+          render={({ field, fieldState }) => {
+            return (
+              <Autocomplete
+                {...field}
+                freeSolo
+                options={organizations}
+                value={field.value} // Controlled value
+                filterOptions={(options, params) => {
+                  const filtered = filter(options, params);
+                  const { inputValue } = params;
+                  // Suggest the creation of a new value
+                  const isExisting = options.some(
+                    (option) => inputValue === option
+                  );
+                  if (inputValue !== "" && !isExisting) {
+                    filtered.push(inputValue);
+                  }
 
-      <TextField
-        {...register("email", {
-          required: "Email is required",
-          pattern: {
-            value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-            message: "Email must be valid",
-          },
-        })}
-        label="Email"
-        type="email"
-        required
-        error={!!errors.email}
-        helperText={errors.email?.message}
-        variant="outlined"
-        fullWidth
-        margin="normal"
-      />
+                  return filtered;
+                }}
+                onChange={(event, newValue) => {
+                  field.onChange(newValue);
+                  // to update the list of organizations
+                  editOrganization(field.value!, newValue!);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Organization"
+                    variant="outlined"
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    fullWidth
+                  />
+                )}
+              />
+            );
+          }}
+        />
 
-      <TextField
-        {...register("mobile", {
-          required: "Mobile number is required",
-          pattern: {
-            value: /^\d{10}$/,
-            message: "Invalid mobile number",
-          },
-        })}
-        label="Mobile"
-        required
-        error={!!errors.mobile}
-        helperText={errors.mobile?.message}
-        variant="outlined"
-        fullWidth
-        margin="normal"
-      />
+        <TextField
+          {...register("email", {
+            required: "Email is required",
+            pattern: {
+              value: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
+              message: "Email must be valid",
+            },
+          })}
+          label="Email"
+          type="email"
+          required
+          error={!!errors.email}
+          helperText={errors.email?.message}
+          variant="outlined"
+          fullWidth
+          margin="normal"
+        />
 
-      <Button
-        type="submit"
-        disabled={!isValid}
-        variant="contained"
-        color="primary"
-      >
-        {id ? "Update" : "Save"}
-      </Button>
-    </form>
+        <TextField
+          {...register("mobile", {
+            required: "Mobile number is required",
+            pattern: {
+              value: /^\d{10}$/,
+              message: "Invalid mobile number",
+            },
+          })}
+          label="Mobile"
+          required
+          error={!!errors.mobile}
+          helperText={errors.mobile?.message}
+          variant="outlined"
+          fullWidth
+          margin="normal"
+        />
+
+        <Button
+          type="submit"
+          disabled={!isValid}
+          variant="contained"
+          color="primary"
+        >
+          {id ? "Update" : "Save"}
+        </Button>
+      </form>
+    </div>
   );
 }

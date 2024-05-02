@@ -3,7 +3,7 @@
 # Phone Book Management System
 
 This project is a phone book management system developed using React, TypeScript, and Tailwind CSS. It features a user-friendly interface that allows users to add, edit, and delete contacts efficiently.
-## The fun part at the Home Page - Bonus part :)
+
 
 
 
@@ -12,10 +12,10 @@ This project is a phone book management system developed using React, TypeScript
 
 
 ## Live Demo
-
-##ןמבךוגןמע 
 No need to download the code! You can watch it online as it is deployed on Vercel:
-##ןמבךוג
+## The fun part at the Home Page - Bonus part :)
+
+
 [View Demo](https://phone-book-platform.vercel.app/)
 
 ## Packages Used
